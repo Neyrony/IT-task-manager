@@ -3,7 +3,7 @@ from django.db import models
 
 
 class TaskType(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     class Meta:
         ordering = ["name"]
@@ -13,7 +13,7 @@ class TaskType(models.Model):
 
 
 class Position(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     class Meta:
         ordering = ["name"]
@@ -35,7 +35,8 @@ class Worker(AbstractUser):
         ordering = ["username"]
 
     def __str__(self):
-        return f"{self.username} - {self.position}"
+        position = self.position.name if self.position else "No position"
+        return f"{self.username} - {position}"
 
 
 class Task(models.Model):
@@ -56,7 +57,7 @@ class Task(models.Model):
     assignees = models.ManyToManyField(Worker, related_name="assigned_tasks")
 
     class Meta:
-        ordering = ["name", "-priority"]
+        ordering = ["-priority", "deadline"]
 
     def __str__(self):
-        return f"{self.name} - {self.get_priority_display()} ({self.is_completed})"
+        return f"{self.name} - {self.get_priority_display()} (is completed: {self.is_completed})"
