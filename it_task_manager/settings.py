@@ -120,6 +120,8 @@ AUTH_USER_MODEL = "manager.Worker"
 
 STATIC_URL = "static/"
 
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
