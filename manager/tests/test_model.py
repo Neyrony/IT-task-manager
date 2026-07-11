@@ -16,11 +16,24 @@ class ModelTest(TestCase):
         self.assertEqual(str(test_position), test_position.name)
 
     def test_worker_str(self):
-        test_worker = get_user_model().objects.create_user(username="test", password="test_password")
+        test_worker = get_user_model().objects.create_user(
+            username="test", password="test_password"
+        )
         self.assertEqual(str(test_worker), f"{test_worker.username} - No position")
         test_worker.position = Position.objects.create(name="test")
-        self.assertEqual(str(test_worker), f"{test_worker.username} - {test_worker.position}")
+        self.assertEqual(
+            str(test_worker), f"{test_worker.username} - {test_worker.position}"
+        )
 
     def test_task_str(self):
-        test_task = Task.objects.create(name="test", description="test", deadline=datetime.datetime.now(), priority=Task.Priority.HIGH, task_type=TaskType.objects.create(name="test"))
-        self.assertEqual(str(test_task), f"{test_task.name} - {test_task.get_priority_display()} (is completed: {test_task.is_completed})")
+        test_task = Task.objects.create(
+            name="test",
+            description="test",
+            deadline=datetime.datetime.now(),
+            priority=Task.Priority.HIGH,
+            task_type=TaskType.objects.create(name="test"),
+        )
+        self.assertEqual(
+            str(test_task),
+            f"{test_task.name} - {test_task.get_priority_display()} (is completed: {test_task.is_completed})",
+        )
