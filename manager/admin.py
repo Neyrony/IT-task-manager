@@ -66,5 +66,11 @@ class TaskAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return Task.objects.select_related("task_type")
 
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "assignees":
+            kwargs["queryset"] = get_user_model().objects.select_related("position")
+
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
+
 
 admin.site.unregister(Group)
