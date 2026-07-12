@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Details page <span class="float-end"><a class="btn btn-primary" href="#">✏️</a> <a class="btn btn-danger" href="#">🗑️</a></span></h1>
+  <p>Name: {{ task.name }}</p>
+  <p>Description: {{ task.description }}</p>
+  <p>Deadline: {{ task.deadline }}</p>
+  <p>Is completed: {{ task.is_completed }}</p>
+  <p>Priority: {{ task.priority }}</p>
+  <p>Task type: {{ task.task_type }}</p>
+  {% if all_assignees %}
+    <p>Assignees:</p>
+    <ul class="list-groop">
+    {% for assignee in all_assignees %}
+      <li class="list-groop-item">{{ assignee.username }}</li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no assignees</p>
+  {% endif %}
+
+{% endblock %}

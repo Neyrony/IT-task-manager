@@ -13,7 +13,7 @@
       </tr>
       {% for task in task_list %}
       	<tr>
-          <td>{{ task.name }}</td>
+          <td><a href="{{ task.get_absolute_url }}">{{ task.name }}</a></td>
           <td>{{ task.deadline }}</td>
           <td>{{ task.is_completed }}</td>
           <td>{{ task.get_priority_display }}</td>
