@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.urls import reverse
 
 
 class TaskType(models.Model):
@@ -61,3 +62,6 @@ class Task(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.get_priority_display()} (is completed: {self.is_completed})"
+
+    def get_absolute_url(self):
+        return reverse("manager:task_detail", kwargs={"pk": self.pk})
