@@ -1,6 +1,6 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.decorators.http import require_GET
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
@@ -32,7 +32,9 @@ class TaskDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["all_assignees"] = Task.objects.get(pk=self.kwargs["pk"]).assignees.all()
+        context["back_url"] = self.request.META.get("HTTP_REFERER", "/")
         return context
+
 
 class TaskCreateView(CreateView):
     model = Task
@@ -43,9 +45,12 @@ class TaskCreateView(CreateView):
 class TaskUpdateView(UpdateView):
     model = Task
     fields = "__all__"
-    success_url = reverse_lazy("manager:task_list")
+
+    def get_success_url(self):
+        return reverse("manager:task_detail", kwargs={"pk": self.kwargs["pk"]})
 
 
 class TaskDeleteView(DeleteView):
     model = Task
+    success_url = reverse_lazy("manager:task_list")
 

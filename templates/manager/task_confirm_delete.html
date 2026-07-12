@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+  <h1>Delete task {{ task.name }}</h1>
+  <p><i>Notice, if you delete this task all assignees will lose it</i></p>
+  <form action="" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input class="btn btn-danger" type="submit" value="Delete">
+  </form>
+  <a class="btn btn-primary mt-3" href="{% url 'manager:task_detail' task.pk %}">Cancel</a>
 {% endblock %}

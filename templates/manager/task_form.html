@@ -1,1 +1,16 @@
 {% extends 'base.html' %}
+
+
+{% block content %}
+  <h1>{{ object|yesno:"Update,Create" }} task</h1>
+  <form action="" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input class="btn btn-success" type="submit" value="Submit">
+  </form>
+  {% if object %}
+    <a class="btn btn-primary mt-3" href="{% url 'manager:task_detail' task.pk %}">Back to Task</a>
+  {% else %}
+    <a class="btn btn-primary mt-3" href="{% url 'manager:task_list' %}">Back to List</a>
+  {% endif %}
+{% endblock %}
