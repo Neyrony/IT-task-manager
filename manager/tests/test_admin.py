@@ -10,7 +10,14 @@ from manager.models import Position, TaskType, Task
 class ClientAuthorization(TestCase):
     def setUp(self):
         self.client = Client()
-        self.admin = get_user_model().objects.create_superuser(username="admin", password="test_password", first_name="Admin", last_name="Test", email="admin@test.com", position=Position.objects.create(name="test1"))
+        self.admin = get_user_model().objects.create_superuser(
+            username="admin",
+            password="test_password",
+            first_name="Admin",
+            last_name="Test",
+            email="admin@test.com",
+            position=Position.objects.create(name="test1"),
+        )
         self.client.force_login(self.admin)
 
 
@@ -60,5 +67,17 @@ class TestTaskAdmin(ClientAuthorization):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.task = Task.objects.create(name="test", deadline=datetime.datetime.now(), is_completed=False, priority=1, task_type=TaskType.objects.create(name="test"))
-        cls.task_info = [cls.task.name, cls.task.deadline, cls.task.is_completed, cls.task.priority, cls.task.task_type]
+        cls.task = Task.objects.create(
+            name="test",
+            deadline=datetime.datetime.now(),
+            is_completed=False,
+            priority=1,
+            task_type=TaskType.objects.create(name="test"),
+        )
+        cls.task_info = [
+            cls.task.name,
+            cls.task.deadline,
+            cls.task.is_completed,
+            cls.task.priority,
+            cls.task.task_type,
+        ]
