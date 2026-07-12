@@ -1,5 +1,6 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_GET
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
@@ -36,11 +37,13 @@ class TaskDetailView(DetailView):
 class TaskCreateView(CreateView):
     model = Task
     fields = "__all__"
+    success_url = reverse_lazy("manager:task_list")
 
 
 class TaskUpdateView(UpdateView):
     model = Task
     fields = "__all__"
+    success_url = reverse_lazy("manager:task_list")
 
 
 class TaskDeleteView(DeleteView):
