@@ -3,5 +3,4 @@
 {% block content %}
 	<h1>Main page</h1>
   <p>You have visited this website {{ visits_amount }} time{{ visits_amount|pluralize }}</p>
-  <a href="{% url 'manager:task_list' %}">Tasks</a>
 {% endblock %}

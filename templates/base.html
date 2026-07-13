@@ -10,23 +10,23 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <title>Task manager</title>
 </head>
-<body>
+<body class="d-flex flex-column h-100 bg-light">
   {% block header %}
-
+    {% include 'includes/header.html' %}
   {% endblock %}
-  <div class="container-fluid mx-auto">
-    {% block content %}
+    <main class="container-fluid mx-auto mt-4 px-4 flex-grow-1">
+      {% block content %}
 
-    {% endblock %}
+      {% endblock %}
 
-    {% block pagination %}
-      <div class="text-center">
-        {% include 'includes/pagination.html' %}
-      </div>
-    {% endblock %}
-  </div>
+      {% block pagination %}
+        <div class="text-center mt-4">
+          {% include 'includes/pagination.html' %}
+        </div>
+      {% endblock %}
+    </main>
   {% block footer %}
-
+    {% include 'includes/footer.html' %}
   {% endblock %}
 </body>
 </html>

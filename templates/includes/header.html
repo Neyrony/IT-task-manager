@@ -1,0 +1,34 @@
+<header class="navbar navbar-light bg-white border-bottom sticky-top py-3 shadow-sm">
+  <div class="container-fluid px-4 d-flex align-items-center position-relative">
+
+    <div class="flex-grow-1 flex-md-grow-0">
+      <a class="navbar-brand fw-bold text-dark fs-4 m-0 p-0" href="{% url 'manager:index' %}">Task Manager</a>
+    </div>
+
+    <div class="position-absolute start-50 translate-middle-x">
+      <ul class="nav gap-4">
+        <li class="nav-item">
+          <a class="nav-link active p-0 text-secondary fw-medium" href="{% url 'manager:task_list' %}">Tasks</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link p-0 text-secondary fw-medium" href="#">Workers</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link p-0 text-secondary fw-medium" href="#">Task Types</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link p-0 text-secondary fw-medium" href="#">Positions</a>
+        </li>
+      </ul>
+    </div>
+    <div class="ms-auto">
+      <a href="#" class="text-dark d-flex align-items-center" title="Profile" style="line-height: 1;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+          <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</header>
