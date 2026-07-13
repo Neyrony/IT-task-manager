@@ -1,0 +1,39 @@
+{% extends 'base/base_list.html' %}
+
+{% block list_title %}
+  <h1 class="fw-bold text-dark m-0">Worker list</h1>
+  <a class="btn btn-outline-dark fw-medium d-flex align-items-center gap-2" href="#">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5a.5.5 0 0 1 .5-.5"/>
+    </svg>
+    <span>Create worker</span>
+  </a>
+{% endblock %}
+
+{% block table_header %}
+  <th class="py-3 px-3 text-secondary tracking-wider">Username</th>
+  <th class="py-3 text-secondary tracking-wider">First name</th>
+  <th class="py-3 text-secondary tracking-wider">Last name</th>
+  <th class="py-3 text-secondary tracking-wider">Email</th>
+  <th class="py-3 px-3 text-secondary tracking-wider">Position</th>
+{% endblock %}
+
+{% block table_data %}
+  {% for worker in worker_list %}
+    <tr class="border-bottom">
+      <td class="px-3 py-3">
+        <a href="#" class="table-link fw-medium text-decoration-none">{{ worker.username }}</a>
+      </td>
+      <td class="text-secondary">{{ worker.first_name }}</td>
+      <td class="text-secondary">{{ worker.last_name }}</td>
+      <td class="text-secondary">{{ worker.email }}</td>
+      <td class="px-3 text-secondary">{{ worker.position.name }}</td>
+    </tr>
+  {% endfor %}
+{% endblock %}
+
+{% block empty_table %}
+  <div class="text-center py-5 bg-white border rounded shadow-sm my-4">
+    <p class="text-secondary m-0 fs-5 fw-medium">There are no workers yet.</p>
+  </div>
+{% endblock %}

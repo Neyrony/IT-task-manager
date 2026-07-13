@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
@@ -10,7 +11,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from manager.models import Task
+from manager.models import Task, Worker, TaskType, Position
 
 
 @require_GET
@@ -61,3 +62,23 @@ class TaskUpdateView(UpdateView):
 class TaskDeleteView(DeleteView):
     model = Task
     success_url = reverse_lazy("manager:task_list")
+
+
+class WorkerListView(ListView):
+    model = get_user_model()
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Worker.objects.select_related("position")
+
+
+class TaskTypeListView(ListView):
+    model = TaskType
+    template_name = "manager/task_type_list.html"
+    context_object_name = "task_type_list"
+    paginate_by = 10
+
+
+class PositionListView(ListView):
+    model = Position
+    paginate_by = 10
