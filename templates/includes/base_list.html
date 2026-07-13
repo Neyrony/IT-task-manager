@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    {% block list_title %}
+    {% endblock %}
+  </div>
+
+  {% if task_list %}
+    <div class="overflow-hidden mb-4">
+      <table class="table table-borderless table-hover align-middle m-0">
+        <thead class="border-bottom text-uppercase fs-7 opacity-75">
+          <tr>
+            {% block table_header %}
+            {% endblock %}
+          </tr>
+        </thead>
+        <tbody>
+          {% block table_date %}
+          {% endblock %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    {% block empty_table %}
+    {% endblock %}
+  {% endif %}
+{% endblock %}
