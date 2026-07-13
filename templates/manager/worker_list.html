@@ -22,7 +22,7 @@
   {% for worker in worker_list %}
     <tr class="border-bottom">
       <td class="px-3 py-3">
-        <a href="#" class="table-link fw-medium text-decoration-none">{{ worker.username }}</a>
+        <a href={{ worker.get_absolute_url }} class="table-link fw-medium text-decoration-none">{{ worker.username }}</a>
       </td>
       <td class="text-secondary">{{ worker.first_name }}</td>
       <td class="text-secondary">{{ worker.last_name }}</td>

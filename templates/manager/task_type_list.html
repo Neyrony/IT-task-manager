@@ -18,7 +18,7 @@
   {% for task_type in task_type_list %}
     <tr class="border-bottom">
       <td class="px-3 py-3">
-        <a class="table-link fw-medium text-decoration-none" href="#">{{ task_type.name }}</a>
+        <a class="table-link fw-medium text-decoration-none" href={{ task_type.get_absolute_url }}>{{ task_type.name }}</a>
       </td>
     </tr>
   {% endfor %}

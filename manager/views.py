@@ -72,6 +72,13 @@ class WorkerListView(ListView):
         return Worker.objects.select_related("position")
 
 
+class WorkerDetailView(DetailView):
+    model = get_user_model()
+
+    def get_queryset(self):
+        return Worker.objects.select_related("position")
+
+
 class TaskTypeListView(ListView):
     model = TaskType
     template_name = "manager/task_type_list.html"
@@ -79,6 +86,16 @@ class TaskTypeListView(ListView):
     paginate_by = 10
 
 
+class TaskTypeDetailView(DetailView):
+    model = TaskType
+    template_name = "manager/task_type_detail.html"
+    context_object_name = "task_type"
+
+
 class PositionListView(ListView):
     model = Position
     paginate_by = 10
+
+
+class PositionDetailView(DetailView):
+    model = Position

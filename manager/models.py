@@ -12,6 +12,9 @@ class TaskType(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("manager:task_type_detail", kwargs={"pk": self.pk})
+
 
 class Position(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -21,6 +24,9 @@ class Position(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("manager:position_detail", kwargs={"pk": self.pk})
 
 
 class Worker(AbstractUser):
@@ -38,6 +44,9 @@ class Worker(AbstractUser):
     def __str__(self):
         position = self.position.name if self.position else "No position"
         return f"{self.username} - {position}"
+
+    def get_absolute_url(self):
+        return reverse("manager:worker_detail", kwargs={"pk": self.pk})
 
 
 class Task(models.Model):

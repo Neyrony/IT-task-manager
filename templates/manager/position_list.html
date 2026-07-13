@@ -18,7 +18,7 @@
   {% for position in position_list %}
     <tr class="border-bottom">
       <td class="px-3 py-3">
-        <a class="table-link fw-medium text-decoration-none" href="#">{{ position.name }}</a>
+        <a class="table-link fw-medium text-decoration-none" href={{ position.get_absolute_url }}>{{ position.name }}</a>
       </td>
     </tr>
   {% endfor %}

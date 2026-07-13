@@ -1,22 +1,87 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Details page <span class="float-end"><a class="btn btn-primary" href="{% url 'manager:task_update' task.pk %}">✏️</a> <a class="btn btn-danger" href="{% url 'manager:task_delete' task.pk %}">🗑️</a></span></h1>
-  <p>Name: {{ task.name }}</p>
-  <p>Description: {{ task.description }}</p>
-  <p>Deadline: {{ task.deadline }}</p>
-  <p>Is completed: {{ task.is_completed }}</p>
-  <p>Priority: {{ task.get_priority_display }}</p>
-  <p>Task type: {{ task.task_type }}</p>
-  {% if all_assignees %}
-    <p>Assignees:</p>
-    <ul class="list-group">
-    {% for assignee in all_assignees %}
-      <li class="list-group-item">{{ assignee.username }}</li>
-    {% endfor %}
-    </ul>
-  {% else %}
-    <p>There are no assignees</p>
-  {% endif %}
-  <a class="btn btn-primary mt-3" href="{% url 'manager:task_list' %}">Back</a>
+<div class="row justify-content-center">
+  <div class="col-md-10 col-lg-9 col-xl-8">
+
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+      <a class="table-link text-decoration-none fw-medium d-inline-flex align-items-center gap-2" href="{% url 'manager:task_list' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+        </svg>
+        Back to Tasks
+      </a>
+      <div class="d-flex gap-2">
+        <a class="btn btn-sm btn-outline-secondary px-3 fw-medium" href="{% url 'manager:task_update' task.pk %}">Edit</a>
+        <a class="btn btn-sm btn-outline-danger px-3 fw-medium" href="{% url 'manager:task_delete' task.pk %}">Delete</a>
+      </div>
+    </div>
+
+    <div class="mb-5">
+      <span class="text-uppercase text-secondary small fw-bold tracking-wider opacity-75">{{ task.task_type }}</span>
+      <h1 class="fw-bold text-dark mt-1 mb-0 h2">{{ task.name }}</h1>
+    </div>
+
+    <div class="d-flex flex-column gap-3">
+
+      <div class="row align-items-center py-2 border-bottom-dashed">
+        <div class="col-sm-3 text-uppercase text-muted fw-bold tracking-wider fs-7">Status</div>
+        <div class="col-sm-9">
+          {% if task.is_completed %}
+            <span class="badge bg-success-subtle text-success px-2.5 py-1.5 rounded fw-medium fs-5">Completed</span>
+          {% else %}
+            <span class="badge bg-warning-subtle text-warning px-2.5 py-1.5 rounded fw-medium fs-5">Active</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row align-items-center py-2 border-bottom-dashed">
+        <div class="col-sm-3 text-uppercase text-muted fw-bold tracking-wider fs-7">Priority</div>
+        <div class="col-sm-9 text-dark fw-medium">
+          {% if task.priority == 'H' or task.priority == 'Urgent' %}
+            <span class="text-danger">●</span> {{ task.get_priority_display }}
+          {% else %}
+            {{ task.get_priority_display }}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row align-items-center py-2 border-bottom-dashed">
+        <div class="col-sm-3 text-uppercase text-muted fw-bold tracking-wider fs-7">Deadline</div>
+        <div class="col-sm-9 text-dark fw-medium">
+          {{ task.deadline }}
+        </div>
+      </div>
+
+      <div class="row align-items-start py-2 border-bottom-dashed">
+        <div class="col-sm-3 text-uppercase text-muted fw-bold tracking-wider fs-7 pt-1">Assignees</div>
+        <div class="col-sm-9">
+          <div class="d-flex flex-wrap gap-2">
+            {% if all_assignees %}
+              {% for assignee in all_assignees %}
+                <span class="bg-white border text-dark p-2 rounded small fw-medium">
+                  {{ assignee.username }}
+                </span>
+              {% endfor %}
+            {% else %}
+              <span class="text-muted italic small">No assignees assigned</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% if task.description %}
+      <div class="row align-items-start py-2">
+        <div class="col-sm-3 text-uppercase text-muted fw-bold tracking-wider fs-7 pt-1">Description</div>
+        <div class="col-sm-9 text-secondary lh-base fs-6" style="white-space: pre-line;">
+          {{ task.description }}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+</div>
+
 {% endblock %}
