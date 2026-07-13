@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
@@ -22,7 +23,7 @@ def main_page(request: HttpRequest) -> HttpResponse:
     return render(request, "manager/index.html", context=context)
 
 
-class TaskListView(ListView):
+class TaskListView(LoginRequiredMixin, ListView):
     model = Task
     paginate_by = 10
 
@@ -30,7 +31,7 @@ class TaskListView(ListView):
         return Task.objects.select_related("task_type")
 
 
-class TaskDetailView(DetailView):
+class TaskDetailView(LoginRequiredMixin, DetailView):
     model = Task
 
     def get_queryset(self):
@@ -45,13 +46,13 @@ class TaskDetailView(DetailView):
         return context
 
 
-class TaskCreateView(CreateView):
+class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     fields = "__all__"
     success_url = reverse_lazy("manager:task_list")
 
 
-class TaskUpdateView(UpdateView):
+class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
     fields = "__all__"
 
@@ -59,12 +60,12 @@ class TaskUpdateView(UpdateView):
         return reverse("manager:task_detail", kwargs={"pk": self.kwargs["pk"]})
 
 
-class TaskDeleteView(DeleteView):
+class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     success_url = reverse_lazy("manager:task_list")
 
 
-class WorkerListView(ListView):
+class WorkerListView(LoginRequiredMixin, ListView):
     model = get_user_model()
     paginate_by = 10
 
@@ -72,30 +73,30 @@ class WorkerListView(ListView):
         return Worker.objects.select_related("position")
 
 
-class WorkerDetailView(DetailView):
+class WorkerDetailView(LoginRequiredMixin, DetailView):
     model = get_user_model()
 
     def get_queryset(self):
         return Worker.objects.select_related("position")
 
 
-class TaskTypeListView(ListView):
+class TaskTypeListView(LoginRequiredMixin, ListView):
     model = TaskType
     template_name = "manager/task_type_list.html"
     context_object_name = "task_type_list"
     paginate_by = 10
 
 
-class TaskTypeDetailView(DetailView):
+class TaskTypeDetailView(LoginRequiredMixin, DetailView):
     model = TaskType
     template_name = "manager/task_type_detail.html"
     context_object_name = "task_type"
 
 
-class PositionListView(ListView):
+class PositionListView(LoginRequiredMixin, ListView):
     model = Position
     paginate_by = 10
 
 
-class PositionDetailView(DetailView):
+class PositionDetailView(LoginRequiredMixin, DetailView):
     model = Position
