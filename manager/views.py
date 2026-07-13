@@ -12,6 +12,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from manager.forms import TaskCreationForm
 from manager.models import Task, Worker, TaskType, Position
 
 
@@ -48,7 +49,7 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
-    fields = "__all__"
+    form_class = TaskCreationForm
     success_url = reverse_lazy("manager:task_list")
 
 
