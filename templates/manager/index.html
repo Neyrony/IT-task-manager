@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<h1>Main page</h1>
+	<h1>IT task manager home</h1>
+  <p>Welcome to Best Task Manager!</p>
+  <h2>Dynamic content</h2>
+  <p>The Task manager has the following record counts:</p>
+  <ul>
+    <li>Workers: {{ amount_of_workers }}</li>
+    <li>Tasks: {{ amount_of_tasks }}</li>
+    <li>Positions: {{ amount_of_positions }}</li>
+    <li>Task types: {{ amount_of_task_types }}</li>
+  </ul>
   <p>You have visited this website {{ visits_amount }} time{{ visits_amount|pluralize }}</p>
 {% endblock %}

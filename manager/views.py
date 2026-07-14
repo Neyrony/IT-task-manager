@@ -24,7 +24,18 @@ from manager.models import Task, Worker, TaskType, Position
 def main_page(request: HttpRequest) -> HttpResponse:
     visits_amount = request.session.get("visits_amount", 0) + 1
     request.session["visits_amount"] = visits_amount
-    context = {"visits_amount": visits_amount}
+    amount_of_workers = get_user_model().objects.all().count()
+    amount_of_tasks = Task.objects.all().count()
+    amount_of_task_types = TaskType.objects.all().count()
+    amount_of_positions = Position.objects.all().count()
+
+    context = {
+        "visits_amount": visits_amount,
+        "amount_of_workers": amount_of_workers,
+        "amount_of_tasks": amount_of_tasks,
+        "amount_of_task_types": amount_of_task_types,
+        "amount_of_positions": amount_of_positions,
+    }
     return render(request, "manager/index.html", context=context)
 
 
