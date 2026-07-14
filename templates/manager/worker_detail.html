@@ -12,8 +12,8 @@
         Back to Workers
       </a>
       <div class="d-flex gap-2">
-        <a class="btn btn-sm btn-outline-secondary px-3 fw-medium" href="#">Edit</a>
-        <a class="btn btn-sm btn-outline-danger px-3 fw-medium" href="#">Delete</a>
+        <a class="btn btn-sm btn-outline-secondary px-3 fw-medium" href="{% url 'manager:worker_update' worker.pk %}">Edit</a>
+        <a class="btn btn-sm btn-outline-danger px-3 fw-medium" href="{% url 'manager:worker_delete' worker.pk %}">Delete</a>
       </div>
     </div>
 

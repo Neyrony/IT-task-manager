@@ -17,6 +17,10 @@ class TaskType(models.Model):
     def get_absolute_url(self):
         return reverse("manager:task_type_detail", kwargs={"pk": self.pk})
 
+    @classmethod
+    def get_class_name(cls):
+        return cls.__name__
+
 
 class Position(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -29,6 +33,10 @@ class Position(models.Model):
 
     def get_absolute_url(self):
         return reverse("manager:position_detail", kwargs={"pk": self.pk})
+
+    @classmethod
+    def get_class_name(cls):
+        return cls.__name__
 
 
 class Worker(AbstractUser):
@@ -49,6 +57,10 @@ class Worker(AbstractUser):
 
     def get_absolute_url(self):
         return reverse("manager:worker_detail", kwargs={"pk": self.pk})
+
+    @classmethod
+    def get_class_name(cls):
+        return cls.__name__
 
 
 class Task(models.Model):
@@ -78,3 +90,7 @@ class Task(models.Model):
 
     def get_absolute_url(self):
         return reverse("manager:task_detail", kwargs={"pk": self.pk})
+
+    @classmethod
+    def get_class_name(cls):
+        return cls.__name__

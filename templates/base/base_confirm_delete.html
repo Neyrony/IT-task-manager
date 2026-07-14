@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="fw-bold text-dark mb-2">
+    Delete {{ object.get_class_name }}
+  </h1>
+  <p><i>Are you sure you want to delete {% block obj_name %} {% endblock %}?</i></p>
+  <p class="text-danger small mb-4 fs-6"><i>This action is permanent and may affect related data.</i></p>
+  <form action="" method="POST">
+    {% csrf_token %}
+    <input class="btn btn-danger mt-3" type="submit" value="Delete">
+  </form>
+  {% block back_btn %}
+    <a class="btn btn-primary mt-3" href="{% url "manager:worker_detail" worker.pk %}">Back to details</a>
+  {% endblock %}
+
+{% endblock %}
