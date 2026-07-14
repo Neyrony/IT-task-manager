@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from manager.models import Task
 
 
-class TaskCreationForm(forms.ModelForm):
+class TaskForm(forms.ModelForm):
     assignees = forms.ModelMultipleChoiceField(
         queryset=get_user_model().objects.all(),
         widget=forms.CheckboxSelectMultiple,

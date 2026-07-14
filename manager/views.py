@@ -12,7 +12,11 @@ from django.views.generic import (
     UpdateView,
 )
 
-from manager.forms import TaskCreationForm, WorkerCreationForm, WorkerUpdateForm
+from manager.forms import (
+    WorkerCreationForm,
+    WorkerUpdateForm,
+    TaskForm,
+)
 from manager.models import Task, Worker, TaskType, Position
 
 
@@ -49,13 +53,13 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
-    form_class = TaskCreationForm
+    form_class = TaskForm
     success_url = reverse_lazy("manager:task_list")
 
 
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
-    fields = "__all__"
+    form_class = TaskForm
 
     def get_success_url(self):
         return reverse("manager:task_detail", kwargs={"pk": self.kwargs["pk"]})
