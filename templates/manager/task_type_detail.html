@@ -12,8 +12,8 @@
         Back to Task types
       </a>
       <div class="d-flex gap-2">
-        <a class="btn btn-sm btn-outline-secondary px-3 fw-medium" href="#">Edit</a>
-        <a class="btn btn-sm btn-outline-danger px-3 fw-medium" href="#">Delete</a>
+        <a class="btn btn-sm btn-outline-secondary px-3 fw-medium" href="{% url 'manager:task_type_update' task_type.pk %}">Edit</a>
+        <a class="btn btn-sm btn-outline-danger px-3 fw-medium" href="{% url 'manager:task_type_delete' task_type.pk %}">Delete</a>
       </div>
     </div>
 

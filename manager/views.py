@@ -117,6 +117,31 @@ class TaskTypeDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "task_type"
 
 
+class TaskTypeCreateView(LoginRequiredMixin, CreateView):
+    model = TaskType
+    fields = ("name",)
+    context_object_name = "task_type"
+    template_name = "manager/task_type_form.html"
+    success_url = reverse_lazy("manager:task_type_list")
+
+
+class TaskTypeUpdateView(LoginRequiredMixin, UpdateView):
+    model = TaskType
+    fields = ("name",)
+    context_object_name = "task_type"
+    template_name = "manager/task_type_form.html"
+
+    def get_success_url(self):
+        return reverse("manager:task_type_detail", kwargs={"pk": self.kwargs["pk"]})
+
+
+class TaskTypeDeleteView(LoginRequiredMixin, DeleteView):
+    model = TaskType
+    context_object_name = "task_type"
+    template_name = "manager/task_type_confirm_delete.html"
+    success_url = reverse_lazy("manager:task_type_list")
+
+
 class PositionListView(LoginRequiredMixin, ListView):
     model = Position
     paginate_by = 9
