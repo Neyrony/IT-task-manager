@@ -5,11 +5,11 @@
   <div class="col-md-10 col-lg-9 col-xl-8">
 
     <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-      <a class="text-decoration-none fw-medium d-inline-flex align-items-center gap-2 text-secondary link-primary" href="{% url 'manager:worker_list' %}">
+      <a class="text-decoration-none fw-medium d-inline-flex align-items-center gap-2 text-secondary link-primary" href={{ request.META.HTTP_REFERER }}>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
           <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
         </svg>
-        Back to Workers
+        Back
       </a>
       <div class="d-flex gap-2">
         <a class="btn btn-sm btn-outline-secondary px-3 fw-medium" href="{% url 'manager:worker_update' worker.pk %}">Edit</a>
@@ -52,7 +52,7 @@
       <div class="row align-items-center py-2">
         <div class="col-sm-3 text-uppercase text-muted fw-bold small">Position</div>
         <div class="col-sm-9">
-          <span class="bg-light text-dark px-2.5 py-1.5 rounded small fw-medium">
+          <span class="bg-light text-dark px-2.5 py-1.5 rounded small fw-medium fs-6">
             {{ worker.position.name }}
           </span>
         </div>
