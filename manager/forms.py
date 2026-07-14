@@ -56,7 +56,4 @@ class TaskSearchForm(forms.ModelForm):
         labels = {
             "name": "",
         }
-        widgets = {
-            "name": forms.TextInput(attrs={"placeholder": "Search by name"})
-        }
-
+        widgets = {"name": forms.TextInput(attrs={"placeholder": "Search by name"})}

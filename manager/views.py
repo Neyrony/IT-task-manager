@@ -15,7 +15,8 @@ from django.views.generic import (
 from manager.forms import (
     WorkerCreationForm,
     WorkerUpdateForm,
-    TaskForm, TaskSearchForm,
+    TaskForm,
+    TaskSearchForm,
 )
 from manager.models import Task, Worker, TaskType, Position
 
@@ -46,9 +47,7 @@ class TaskListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         task_name = self.request.GET.get("name", "")
-        context["search_form"] = TaskSearchForm(
-            initial={"name": task_name}
-        )
+        context["search_form"] = TaskSearchForm(initial={"name": task_name})
         return context
 
     def get_queryset(self):
