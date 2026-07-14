@@ -37,10 +37,14 @@ urlpatterns = [
     path("task-types/<int:pk>/", TaskTypeDetailView.as_view(), name="task_type_detail"),
     path("task-types/create/", TaskTypeCreateView.as_view(), name="task_type_create"),
     path(
-        "task-types/<int:pk>/update/", TaskTypeUpdateView.as_view(), name="task_type_update"
+        "task-types/<int:pk>/update/",
+        TaskTypeUpdateView.as_view(),
+        name="task_type_update",
     ),
     path(
-        "task-types/<int:pk>/delete/", TaskTypeDeleteView.as_view(), name="task_type_delete"
+        "task-types/<int:pk>/delete/",
+        TaskTypeDeleteView.as_view(),
+        name="task_type_delete",
     ),
     path("positions/", PositionListView.as_view(), name="position_list"),
     path("positions/<int:pk>/", PositionDetailView.as_view(), name="position_detail"),
