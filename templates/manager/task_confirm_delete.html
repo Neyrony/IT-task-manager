@@ -1,11 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'base/base_confirm_delete.html' %}
 
-{% block content %}
-  <h1>Delete task {{ task.name }}</h1>
-  <p><i>Notice, if you delete this task all assignees will lose it</i></p>
-  <form action="" method="POST">
-    {% csrf_token %}
-    <input class="btn btn-danger mt-3" type="submit" value="Delete">
-  </form>
-  <a class="btn btn-primary mt-3" href="{% url 'manager:task_detail' task.pk %}">Cancel</a>
+{% block obj_name %}
+  {{ task.username }}
+{% endblock %}
+
+{% block back_btn %}
+  <a class="btn btn-primary mt-3" href="{% url "manager:task_detail" task.pk %}">Back to details</a>
 {% endblock %}

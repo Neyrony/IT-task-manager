@@ -3,3 +3,7 @@
 {% block obj_name %}
   {{ worker.username }} ({{ worker.first_name }} {{ worker.last_name }})
 {% endblock %}
+
+{% block back_btn %}
+  <a class="btn btn-primary mt-3" href="{% url "manager:worker_detail" worker.pk %}">Back to details</a>
+{% endblock %}
