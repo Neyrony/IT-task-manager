@@ -47,3 +47,16 @@ class WorkerUpdateForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ("first_name", "last_name", "email", "position")
+
+
+class TaskSearchForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ("name",)
+        labels = {
+            "name": "",
+        }
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "Search by name"})
+        }
+
