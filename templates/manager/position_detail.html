@@ -12,8 +12,8 @@
         Back to Positions
       </a>
       <div class="d-flex gap-2">
-        <a class="btn btn-sm btn-outline-secondary px-3 fw-medium" href="#">Edit</a>
-        <a class="btn btn-sm btn-outline-danger px-3 fw-medium" href="#">Delete</a>
+        <a class="btn btn-sm btn-outline-secondary px-3 fw-medium" href="{% url 'manager:position_update' position.pk %}">Edit</a>
+        <a class="btn btn-sm btn-outline-danger px-3 fw-medium" href="{% url 'manager:position_delete' position.pk %}">Delete</a>
       </div>
     </div>
 

@@ -149,3 +149,22 @@ class PositionListView(LoginRequiredMixin, ListView):
 
 class PositionDetailView(LoginRequiredMixin, DetailView):
     model = Position
+
+
+class PositionCreateView(LoginRequiredMixin, CreateView):
+    model = Position
+    fields = ("name",)
+    success_url = reverse_lazy("manager:position_list")
+
+
+class PositionUpdateView(LoginRequiredMixin, UpdateView):
+    model = Position
+    fields = ("name",)
+
+    def get_success_url(self):
+        return reverse("manager:position_detail", kwargs={"pk": self.kwargs["pk"]})
+
+
+class PositionDeleteView(LoginRequiredMixin, DeleteView):
+    model = Position
+    success_url = reverse_lazy("manager:position_list")

@@ -1,0 +1,13 @@
+{% extends 'base/base_form.html' %}
+
+{% block class_name %}
+	Position
+{% endblock %}
+
+{% block back_button %}
+	  {% if position %}
+    <a class="btn btn-primary mt-3"  href="{% url 'manager:position_detail' position.pk %}" >Back to details</a>
+  {% else %}
+    <a class="btn btn-primary mt-3"  href="{% url 'manager:position_list' %}" >Back to list</a>
+  {% endif %}
+{% endblock %}
