@@ -26,7 +26,7 @@ def main_page(request: HttpRequest) -> HttpResponse:
 
 class TaskListView(LoginRequiredMixin, ListView):
     model = Task
-    paginate_by = 10
+    paginate_by = 9
 
     def get_queryset(self):
         return Task.objects.select_related("task_type")
@@ -68,7 +68,7 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
 
 class WorkerListView(LoginRequiredMixin, ListView):
     model = get_user_model()
-    paginate_by = 10
+    paginate_by = 9
 
     def get_queryset(self):
         return Worker.objects.select_related("position")
@@ -104,7 +104,7 @@ class TaskTypeListView(LoginRequiredMixin, ListView):
     model = TaskType
     template_name = "manager/task_type_list.html"
     context_object_name = "task_type_list"
-    paginate_by = 10
+    paginate_by = 9
 
 
 class TaskTypeDetailView(LoginRequiredMixin, DetailView):
@@ -115,7 +115,7 @@ class TaskTypeDetailView(LoginRequiredMixin, DetailView):
 
 class PositionListView(LoginRequiredMixin, ListView):
     model = Position
-    paginate_by = 10
+    paginate_by = 9
 
 
 class PositionDetailView(LoginRequiredMixin, DetailView):
