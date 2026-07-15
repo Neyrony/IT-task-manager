@@ -1,15 +1,58 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<h1>IT task manager home</h1>
-  <p>Welcome to Best Task Manager!</p>
-  <h2>Dynamic content</h2>
-  <p>The Task manager has the following record counts:</p>
-  <ul>
-    <li>Workers: {{ amount_of_workers }}</li>
-    <li>Tasks: {{ amount_of_tasks }}</li>
-    <li>Positions: {{ amount_of_positions }}</li>
-    <li>Task types: {{ amount_of_task_types }}</li>
-  </ul>
-  <p>You have visited this website {{ visits_amount }} time{{ visits_amount|pluralize }}</p>
+<div class="container py-5">
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold text-primary mb-2">🚀 IT Task Manager</h1>
+    <p class="lead text-muted">Welcome to the Best Task Manager for your development workflow!</p>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <div class="col-md-3">
+      <div class="card h-100 border-0 shadow-sm text-center p-3">
+        <div class="card-body">
+          <div class="fs-1 mb-2">👥</div>
+          <h5 class="text-muted fw-normal">Workers</h5>
+          <h2 class="display-6 fw-bold text-dark mb-0">{{ amount_of_workers }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card h-100 border-0 shadow-sm text-center p-3">
+        <div class="card-body">
+          <div class="fs-1 mb-2">📋</div>
+          <h5 class="text-muted fw-normal">Tasks</h5>
+          <h2 class="display-6 fw-bold text-dark mb-0">{{ amount_of_tasks }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card h-100 border-0 shadow-sm text-center p-3">
+        <div class="card-body">
+          <div class="fs-1 mb-2">💼</div>
+          <h5 class="text-muted fw-normal">Positions</h5>
+          <h2 class="display-6 fw-bold text-dark mb-0">{{ amount_of_positions }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card h-100 border-0 shadow-sm text-center p-3">
+        <div class="card-body">
+          <div class="fs-1 mb-2">⚙️</div>
+          <h5 class="text-muted fw-normal">Task Types</h5>
+          <h2 class="display-6 fw-bold text-dark mb-0">{{ amount_of_task_types }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center">
+    <div class="badge bg-light text-dark p-3 fs-6 rounded-pill shadow-sm">
+      👀 You have visited this site <strong>{{ visits_amount }}</strong> time{{ visits_amount|pluralize }}
+    </div>
+  </div>
+</div>
 {% endblock %}
