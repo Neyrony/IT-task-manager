@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from manager.models import Task
 
@@ -11,6 +13,16 @@ class TaskForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+
+    def clean_deadline(self):
+        deadline = self.cleaned_data["deadline"]
+        print(deadline)
+        print(type(deadline))
+
+        if deadline < timezone.now():
+            raise ValidationError("Deadline cannot be in the past")
+
+        return deadline
 
     class Meta:
         model = Task
@@ -27,9 +39,30 @@ class TaskForm(forms.ModelForm):
         widgets = {
             "description": forms.Textarea(attrs={"rows": 1}),
             "deadline": forms.DateInput(
-                attrs={"type": "date", "class": "form-control"}
+                format="%Y-%m-%dT%H:%M",
+                attrs={"type": "datetime-local", "class": "form-control"}
             ),
         }
+
+
+class TaskCreateForm(TaskForm):
+    def clean_deadline(self):
+        deadline = self.cleaned_data["deadline"]
+
+        if deadline < timezone.now():
+            raise ValidationError("Deadline cannot be in the past")
+
+        return deadline
+
+
+class TaskUpdateForm(TaskForm):
+    def clean_deadline(self):
+        deadline = self.cleaned_data["deadline"]
+
+        if timezone.now() > deadline != self.initial.get("deadline"):
+            raise ValidationError("Deadline cannot be in the past")
+
+        return deadline
 
 
 class WorkerCreationForm(UserCreationForm):
