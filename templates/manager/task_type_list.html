@@ -1,4 +1,5 @@
 {% extends 'base/base_list.html' %}
+{% load crispy_forms_filters %}
 
 {% block list_title %}
   <h1 class="fw-bold text-dark m-0">Task type list</h1>
@@ -8,6 +9,14 @@
     </svg>
     <span>Create task type</span>
   </a>
+{% endblock %}
+
+{% block search_form %}
+    <form class="d-flex gap-2 align-items-center" action="" method="GET" novalidate>
+      {{ search_form|crispy }}
+      <input class="btn btn-primary" type="submit" value="🔍">
+    <a class="btn btn-secondary" href="{% url 'manager:task_type_list' %}">🔄</a>
+  </form>
 {% endblock %}
 
 {% block table_header %}

@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from manager.models import Task
+from manager.models import Task, Position, TaskType
 
 
 class TaskForm(forms.ModelForm):
@@ -40,7 +40,7 @@ class TaskForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"rows": 1}),
             "deadline": forms.DateInput(
                 format="%Y-%m-%dT%H:%M",
-                attrs={"type": "datetime-local", "class": "form-control"}
+                attrs={"type": "datetime-local", "class": "form-control"},
             ),
         }
 
@@ -85,6 +85,34 @@ class WorkerUpdateForm(forms.ModelForm):
 class TaskSearchForm(forms.ModelForm):
     class Meta:
         model = Task
+        fields = ("name",)
+        labels = {
+            "name": "",
+        }
+        widgets = {"name": forms.TextInput(attrs={"placeholder": "Search by name"})}
+
+
+class WorkerSearchForm(forms.Form):
+    name = forms.CharField(
+        max_length=150,
+        label="",
+        widget=forms.TextInput(attrs={"placeholder": "Search by any name"}),
+    )
+
+
+class TaskTypeSearchForm(forms.ModelForm):
+    class Meta:
+        model = TaskType
+        fields = ("name",)
+        labels = {
+            "name": "",
+        }
+        widgets = {"name": forms.TextInput(attrs={"placeholder": "Search by name"})}
+
+
+class PositionSearchForm(forms.ModelForm):
+    class Meta:
+        model = Position
         fields = ("name",)
         labels = {
             "name": "",
