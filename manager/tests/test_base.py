@@ -13,6 +13,6 @@ class ClientAuthorization(TestCase):
             first_name="Admin",
             last_name="Test",
             email="admin@test.com",
-            position=Position.objects.create(name="test1"),
+            position=Position.objects.create(name="test"),
         )
         self.client.force_login(self.admin)
