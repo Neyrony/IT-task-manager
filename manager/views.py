@@ -2,8 +2,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
+from django.utils import timezone
+from django.views import View
 from django.views.decorators.http import require_GET
 from django.views.generic import (
     ListView,
@@ -83,6 +85,7 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["time_now"] = timezone.now()
         context["all_assignees"] = Task.objects.get(
             pk=self.kwargs["pk"]
         ).assignees.all()
@@ -102,6 +105,16 @@ class TaskUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("manager:task_detail", kwargs={"pk": self.kwargs["pk"]})
+
+
+class TaskUpdateStatusView(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        task = get_object_or_404(Task, pk=pk)
+
+        task.is_completed = not task.is_completed
+        task.save()
+
+        return redirect("manager:task_detail", pk=pk)
 
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
