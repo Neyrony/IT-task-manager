@@ -10,7 +10,7 @@ class TestPositionAdmin(ClientAuthorization):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.test_position = Position.objects.create(name="test")
+        cls.test_position = Position.objects.create(name="Test")
 
     def test_display_position(self):
         url = reverse("admin:manager_position_changelist")

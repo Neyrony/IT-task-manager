@@ -1,8 +1,7 @@
-import datetime
-
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from manager.models import TaskType, Task, Position
 from manager.tests.test_base import ClientAuthorization
@@ -65,16 +64,16 @@ class TaskViewTest(ClientAuthorization):
     def setUp(self):
         super().setUp()
         test_task_type = TaskType.objects.create(name="test")
-        Task.objects.create(
+        self.task_1 = Task.objects.create(
             name="test1",
-            deadline=datetime.datetime.now(),
+            deadline=timezone.now(),
             is_completed=False,
             priority=1,
             task_type=test_task_type,
         )
-        Task.objects.create(
+        self.task_2 = Task.objects.create(
             name="test2",
-            deadline=datetime.datetime.now(),
+            deadline=timezone.now(),
             is_completed=False,
             priority=1,
             task_type=test_task_type,
@@ -86,41 +85,79 @@ class TaskViewTest(ClientAuthorization):
         self.assertEqual(list(response.context["task_list"]), list(Task.objects.all()))
         self.assertTemplateUsed(response, "manager/task_list.html")
 
+    def test_task_detail_view(self):
+        response = self.client.get(reverse("manager:task_detail", args=[self.task_1.pk]))
+
+        self.assertContains(response, self.task_1.name)
+        self.assertContains(response, self.task_1.get_priority_display())
+        self.assertContains(response, self.task_1.deadline.strftime("%B %d, %Y"))
+        self.assertContains(response, self.task_1.description)
+        self.assertTemplateUsed(response, "manager/task_detail.html")
+
 
 class WorkerViewTest(ClientAuthorization):
     def setUp(self):
         super().setUp()
-        get_user_model().objects.create_user(username="test1", password="test")
-        get_user_model().objects.create_user(username="test2", password="test")
+        position = Position.objects.create(name="test1")
+        self.worker_1 = get_user_model().objects.create_user(username="test1", password="test", first_name="first", last_name="last", email="user1@test.com", position=position)
+        self.worker_2 = get_user_model().objects.create_user(username="test2", password="test", first_name="first", last_name="last", email="user2@test.com", position=position)
+
 
     def test_worker_list_view(self):
         response = self.client.get(reverse("manager:worker_list"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(list(response.context["worker_list"]), list(get_user_model().objects.all()))
+        self.assertEqual(
+            list(response.context["worker_list"]), list(get_user_model().objects.all())
+        )
         self.assertTemplateUsed(response, "manager/worker_list.html")
+
+    def test_worker_detail_view(self):
+        response = self.client.get(reverse("manager:worker_detail", args=[self.worker_1.pk]))
+
+        self.assertContains(response, self.worker_1.username)
+        self.assertContains(response, self.worker_1.first_name + " " + self.worker_1.last_name)
+        self.assertContains(response, self.worker_1.email)
+        self.assertContains(response, self.worker_1.position.name)
+        self.assertTemplateUsed(response, "manager/worker_detail.html")
 
 
 class TaskTypeViewTest(ClientAuthorization):
     def setUp(self):
         super().setUp()
-        TaskType.objects.create(name="test1")
-        TaskType.objects.create(name="test2")
+        self.task_type_1 = TaskType.objects.create(name="test1")
+        self.task_type_2 = TaskType.objects.create(name="test2")
 
     def test_task_type_list_view(self):
         response = self.client.get(reverse("manager:task_type_list"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(list(response.context["task_type_list"]), list(TaskType.objects.all()))
+        self.assertEqual(
+            list(response.context["task_type_list"]), list(TaskType.objects.all())
+        )
         self.assertTemplateUsed(response, "manager/task_type_list.html")
+
+    def test_task_detail_view(self):
+        response = self.client.get(reverse("manager:task_type_detail", args=[self.task_type_1.pk]))
+
+        self.assertContains(response, self.task_type_1.name)
+        self.assertTemplateUsed(response, "manager/task_type_detail.html")
 
 
 class PositionViewTest(ClientAuthorization):
     def setUp(self):
         super().setUp()
-        Position.objects.create(name="test1")
-        Position.objects.create(name="test2")
+        self.position_1 = Position.objects.create(name="test1")
+        self.position_2 = Position.objects.create(name="test2")
 
     def test_position_list_view(self):
         response = self.client.get(reverse("manager:position_list"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(list(response.context["position_list"]), list(Position.objects.all()))
+        self.assertEqual(
+            list(response.context["position_list"]), list(Position.objects.all())
+        )
         self.assertTemplateUsed(response, "manager/position_list.html")
+
+    def test_task_detail_view(self):
+        response = self.client.get(reverse("manager:position_detail", args=[self.position_1.pk]))
+
+        self.assertContains(response, self.position_1.name)
+        self.assertTemplateUsed(response, "manager/position_detail.html")
