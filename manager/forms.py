@@ -14,16 +14,6 @@ class TaskForm(forms.ModelForm):
         required=False,
     )
 
-    def clean_deadline(self):
-        deadline = self.cleaned_data["deadline"]
-        print(deadline)
-        print(type(deadline))
-
-        if deadline < timezone.now():
-            raise ValidationError("Deadline cannot be in the past")
-
-        return deadline
-
     class Meta:
         model = Task
         fields = (
