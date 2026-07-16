@@ -62,7 +62,8 @@ class AccessViewTest(TestCase):
 
 
 class TaskViewTest(ClientAuthorization):
-    def test_task_list_view(self):
+    def setUp(self):
+        super().setUp()
         test_task_type = TaskType.objects.create(name="test")
         Task.objects.create(
             name="test1",
@@ -79,6 +80,7 @@ class TaskViewTest(ClientAuthorization):
             task_type=test_task_type,
         )
 
+    def test_task_list_view(self):
         response = self.client.get(reverse("manager:task_list"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["task_list"]), list(Task.objects.all()))
@@ -86,10 +88,12 @@ class TaskViewTest(ClientAuthorization):
 
 
 class WorkerViewTest(ClientAuthorization):
-    def test_worker_list_view(self):
+    def setUp(self):
+        super().setUp()
         get_user_model().objects.create_user(username="test1", password="test")
         get_user_model().objects.create_user(username="test2", password="test")
 
+    def test_worker_list_view(self):
         response = self.client.get(reverse("manager:worker_list"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["worker_list"]), list(get_user_model().objects.all()))
@@ -97,10 +101,12 @@ class WorkerViewTest(ClientAuthorization):
 
 
 class TaskTypeViewTest(ClientAuthorization):
-    def test_task_type_list_view(self):
+    def setUp(self):
+        super().setUp()
         TaskType.objects.create(name="test1")
         TaskType.objects.create(name="test2")
 
+    def test_task_type_list_view(self):
         response = self.client.get(reverse("manager:task_type_list"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["task_type_list"]), list(TaskType.objects.all()))
@@ -108,10 +114,12 @@ class TaskTypeViewTest(ClientAuthorization):
 
 
 class PositionViewTest(ClientAuthorization):
-    def test_position_list_view(self):
+    def setUp(self):
+        super().setUp()
         Position.objects.create(name="test1")
         Position.objects.create(name="test2")
 
+    def test_position_list_view(self):
         response = self.client.get(reverse("manager:position_list"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["position_list"]), list(Position.objects.all()))
