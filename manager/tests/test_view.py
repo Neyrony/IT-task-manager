@@ -1,3 +1,6 @@
+import datetime
+from urllib import response
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -63,20 +66,20 @@ class AccessViewTest(TestCase):
 class TaskViewTest(ClientAuthorization):
     def setUp(self):
         super().setUp()
-        test_task_type = TaskType.objects.create(name="test")
+        self.test_task_type = TaskType.objects.create(name="test")
         self.task_1 = Task.objects.create(
             name="test1",
             deadline=timezone.now(),
             is_completed=False,
             priority=1,
-            task_type=test_task_type,
+            task_type=self.test_task_type,
         )
         self.task_2 = Task.objects.create(
             name="test2",
             deadline=timezone.now(),
             is_completed=False,
             priority=1,
-            task_type=test_task_type,
+            task_type=self.test_task_type,
         )
 
     def test_task_list_view(self):
@@ -86,7 +89,9 @@ class TaskViewTest(ClientAuthorization):
         self.assertTemplateUsed(response, "manager/task_list.html")
 
     def test_task_detail_view(self):
-        response = self.client.get(reverse("manager:task_detail", args=[self.task_1.pk]))
+        response = self.client.get(
+            reverse("manager:task_detail", args=[self.task_1.pk])
+        )
 
         self.assertContains(response, self.task_1.name)
         self.assertContains(response, self.task_1.get_priority_display())
@@ -94,14 +99,43 @@ class TaskViewTest(ClientAuthorization):
         self.assertContains(response, self.task_1.description)
         self.assertTemplateUsed(response, "manager/task_detail.html")
 
+    def test_task_create_view(self):
+        form_data = {
+            "name": "test3",
+            "description": "Some text",
+            "deadline": timezone.now() + datetime.timedelta(days=1),
+            "is_completed": False,
+            "priority": 1,
+            "task_type": self.test_task_type.pk,
+        }
+
+        response = self.client.post(reverse("manager:task_create"), data=form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("manager:task_list"))
+        self.assertTrue(Task.objects.filter(name=form_data["name"]).exists())
+
 
 class WorkerViewTest(ClientAuthorization):
     def setUp(self):
         super().setUp()
-        position = Position.objects.create(name="test1")
-        self.worker_1 = get_user_model().objects.create_user(username="test1", password="test", first_name="first", last_name="last", email="user1@test.com", position=position)
-        self.worker_2 = get_user_model().objects.create_user(username="test2", password="test", first_name="first", last_name="last", email="user2@test.com", position=position)
-
+        self.position = Position.objects.create(name="test1")
+        self.worker_1 = get_user_model().objects.create_user(
+            username="test1",
+            password="test",
+            first_name="first",
+            last_name="last",
+            email="user1@test.com",
+            position=self.position,
+        )
+        self.worker_2 = get_user_model().objects.create_user(
+            username="test2",
+            password="test",
+            first_name="first",
+            last_name="last",
+            email="user2@test.com",
+            position=self.position,
+        )
 
     def test_worker_list_view(self):
         response = self.client.get(reverse("manager:worker_list"))
@@ -112,13 +146,32 @@ class WorkerViewTest(ClientAuthorization):
         self.assertTemplateUsed(response, "manager/worker_list.html")
 
     def test_worker_detail_view(self):
-        response = self.client.get(reverse("manager:worker_detail", args=[self.worker_1.pk]))
+        response = self.client.get(
+            reverse("manager:worker_detail", args=[self.worker_1.pk])
+        )
 
         self.assertContains(response, self.worker_1.username)
-        self.assertContains(response, self.worker_1.first_name + " " + self.worker_1.last_name)
+        self.assertContains(
+            response, self.worker_1.first_name + " " + self.worker_1.last_name
+        )
         self.assertContains(response, self.worker_1.email)
         self.assertContains(response, self.worker_1.position.name)
         self.assertTemplateUsed(response, "manager/worker_detail.html")
+
+    def test_worker_create_view(self):
+        form_data = {
+            "username": "some_user",
+            "password1": "Super Secret password",
+            "password2": "Super Secret password",
+        }
+
+        response = self.client.post(reverse("manager:worker_create"), data=form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("manager:worker_list"))
+        self.assertTrue(
+            get_user_model().objects.filter(username=form_data["username"]).exists()
+        )
 
 
 class TaskTypeViewTest(ClientAuthorization):
@@ -135,11 +188,22 @@ class TaskTypeViewTest(ClientAuthorization):
         )
         self.assertTemplateUsed(response, "manager/task_type_list.html")
 
-    def test_task_detail_view(self):
-        response = self.client.get(reverse("manager:task_type_detail", args=[self.task_type_1.pk]))
+    def test_task_type_detail_view(self):
+        response = self.client.get(
+            reverse("manager:task_type_detail", args=[self.task_type_1.pk])
+        )
 
         self.assertContains(response, self.task_type_1.name)
         self.assertTemplateUsed(response, "manager/task_type_detail.html")
+
+    def test_task_type_create_view(self):
+        form_data = {"name": "some name"}
+
+        response = self.client.post(reverse("manager:task_type_create"), data=form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("manager:task_type_list"))
+        self.assertTrue(TaskType.objects.filter(name=form_data["name"]).exists())
 
 
 class PositionViewTest(ClientAuthorization):
@@ -156,8 +220,19 @@ class PositionViewTest(ClientAuthorization):
         )
         self.assertTemplateUsed(response, "manager/position_list.html")
 
-    def test_task_detail_view(self):
-        response = self.client.get(reverse("manager:position_detail", args=[self.position_1.pk]))
+    def test_position_detail_view(self):
+        response = self.client.get(
+            reverse("manager:position_detail", args=[self.position_1.pk])
+        )
 
         self.assertContains(response, self.position_1.name)
         self.assertTemplateUsed(response, "manager/position_detail.html")
+
+    def test_position_create_view(self):
+        form_data = {"name": "some name"}
+
+        response = self.client.post(reverse("manager:position_create"), data=form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("manager:position_list"))
+        self.assertTrue(Position.objects.filter(name=form_data["name"]).exists())
