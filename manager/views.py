@@ -56,11 +56,23 @@ class TaskListView(LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
+        filter_param = Q()
         queryset = Task.objects.select_related("task_type")
         task_name = self.request.GET.get("name")
+        is_completed = self.request.GET.get("status", "")
+        task_scope = self.request.GET.get("scope", "")
         if task_name:
-            return queryset.filter(name__icontains=task_name)
-        return queryset
+            filter_param &= Q(name__icontains=task_name)
+
+        if is_completed == "completed":
+            filter_param &= Q(is_completed=True)
+        elif is_completed == "not-completed":
+            filter_param &= Q(is_completed=False)
+
+        if task_scope == "my":
+            filter_param &= Q(assignees=self.request.user)
+
+        return queryset.filter(filter_param)
 
 
 class TaskDetailView(LoginRequiredMixin, DetailView):

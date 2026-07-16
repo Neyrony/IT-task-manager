@@ -1,14 +1,40 @@
 {% extends 'base/base_list.html' %}
+{% load query_param_concat %}
 {% load crispy_forms_filters %}
 
 {% block list_title %}
-  <h1 class="fw-bold text-dark m-0">Task list</h1>
-  <a class="btn btn-outline-dark fw-medium d-flex align-items-center gap-2" href="{% url 'manager:task_create' %}">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-      <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5a.5.5 0 0 1 .5-.5"/>
-    </svg>
-    <span>Create Task</span>
-  </a>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 w-100">
+  <h1 class="fw-bold text-dark m-0">Task List</h1>
+
+  <div class="d-flex align-items-center gap-2 ms-auto">
+    {% if request.GET.status == "completed" %}
+      <a class="btn btn-outline-danger fw-medium d-flex align-items-center gap-1" href="?{% query_param_concat request status="not-completed" page=1 %}">
+        <span>❌ Uncompleted</span>
+      </a>
+    {% else %}
+      <a class="btn btn-outline-success fw-medium d-flex align-items-center gap-1" href="?{% query_param_concat request status="completed" page=1 %}">
+        <span>✅ Completed</span>
+      </a>
+    {% endif %}
+
+    {% if request.GET.scope == "my" %}
+      <a class="btn btn-outline-primary fw-medium d-flex align-items-center gap-1" href="?{% query_param_concat request scope="all" %}">
+        <span>👥 All Tasks</span>
+      </a>
+    {% else %}
+      <a class="btn btn-outline-primary fw-medium d-flex align-items-center gap-1" href="?{% query_param_concat request scope="my" %}">
+        <span>👤 My Tasks</span>
+      </a>
+    {% endif %}
+
+    <a class="btn btn-outline-dark fw-medium d-flex align-items-center gap-2" href="{% url 'manager:task_create' %}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5a.5.5 0 0 1 .5-.5"/>
+      </svg>
+      <span>Create Task</span>
+    </a>
+  </div>
+</div>
 {% endblock %}
 
 {% block search_form %}
