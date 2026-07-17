@@ -139,6 +139,13 @@ class TaskViewTest(ClientAuthorization):
         self.assertEqual(new_description, form_data["description"])
         self.assertEqual(new_status, form_data["is_completed"])
 
+    def test_task_delete_view(self):
+        response = self.client.post(
+            reverse("manager:task_delete", args=[self.task_1.pk])
+        )
+        self.assertRedirects(response, reverse("manager:task_list"))
+        self.assertFalse(Task.objects.filter(name=self.task_1.name).exists())
+
 
 class WorkerViewTest(ClientAuthorization):
     def setUp(self):
@@ -219,6 +226,15 @@ class WorkerViewTest(ClientAuthorization):
         self.assertEqual(new_first_name, form_data["first_name"])
         self.assertEqual(new_last_name, form_data["last_name"])
 
+    def test_worker_delete_view(self):
+        response = self.client.post(
+            reverse("manager:worker_delete", args=[self.worker_1.pk])
+        )
+        self.assertRedirects(response, reverse("manager:worker_list"))
+        self.assertFalse(
+            get_user_model().objects.filter(username=self.worker_1.username).exists()
+        )
+
 
 class TaskTypeViewTest(ClientAuthorization):
     def setUp(self):
@@ -269,6 +285,13 @@ class TaskTypeViewTest(ClientAuthorization):
         self.task_type_1.refresh_from_db()
         self.assertEqual(new_name, form_data["name"])
 
+    def test_task_type_delete_view(self):
+        response = self.client.post(
+            reverse("manager:task_type_delete", args=[self.task_type_1.pk])
+        )
+        self.assertRedirects(response, reverse("manager:task_type_list"))
+        self.assertFalse(TaskType.objects.filter(name=self.task_type_1.name).exists())
+
 
 class PositionViewTest(ClientAuthorization):
     def setUp(self):
@@ -318,3 +341,10 @@ class PositionViewTest(ClientAuthorization):
         )
         self.position_1.refresh_from_db()
         self.assertEqual(new_name, form_data["name"])
+
+    def test_position_delete_view(self):
+        response = self.client.post(
+            reverse("manager:position_delete", args=[self.position_1.pk])
+        )
+        self.assertRedirects(response, reverse("manager:position_list"))
+        self.assertFalse(Position.objects.filter(name=self.position_1.name).exists())
