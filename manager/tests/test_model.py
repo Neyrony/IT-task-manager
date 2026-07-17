@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone
 
 from manager.models import TaskType, Position, Task
 
@@ -29,7 +30,7 @@ class ModelTest(TestCase):
         test_task = Task.objects.create(
             name="test",
             description="test",
-            deadline=datetime.datetime.now(),
+            deadline=timezone.now() + datetime.timedelta(days=1),
             priority=Task.Priority.HIGH,
             task_type=TaskType.objects.create(name="test"),
         )
