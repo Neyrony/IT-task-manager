@@ -2,6 +2,7 @@ import datetime
 from urllib import response
 
 from django.contrib.auth import get_user_model
+from django.db.models import Model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -115,6 +116,29 @@ class TaskViewTest(ClientAuthorization):
         self.assertRedirects(response, reverse("manager:task_list"))
         self.assertTrue(Task.objects.filter(name=form_data["name"]).exists())
 
+    def test_task_update_view(self):
+        new_description = "New description"
+        new_status = not self.task_1.is_completed
+        form_data = {
+            "name": self.task_1.name,
+            "description": new_description,
+            "deadline": self.task_1.deadline,
+            "is_completed": new_status,
+            "priority": self.task_1.priority,
+            "task_type": self.task_1.task_type.pk,
+        }
+        response = self.client.post(
+            reverse("manager:task_update", kwargs={"pk": self.task_1.pk}),
+            data=form_data,
+        )
+
+        self.assertRedirects(
+            response, reverse("manager:task_detail", kwargs={"pk": self.task_1.pk})
+        )
+        self.task_1.refresh_from_db()
+        self.assertEqual(new_description, form_data["description"])
+        self.assertEqual(new_status, form_data["is_completed"])
+
 
 class WorkerViewTest(ClientAuthorization):
     def setUp(self):
@@ -173,6 +197,28 @@ class WorkerViewTest(ClientAuthorization):
             get_user_model().objects.filter(username=form_data["username"]).exists()
         )
 
+    def test_worker_update_view(self):
+        new_first_name = "New first name"
+        new_last_name = "New last name"
+
+        form_data = {
+            "first_name": new_first_name,
+            "last_name": new_last_name,
+            "email": self.worker_1.email,
+            "position": self.worker_1.position.pk,
+        }
+        response = self.client.post(
+            reverse("manager:worker_update", kwargs={"pk": self.worker_1.pk}),
+            data=form_data,
+        )
+
+        self.assertRedirects(
+            response, reverse("manager:worker_detail", kwargs={"pk": self.worker_1.pk})
+        )
+        self.worker_1.refresh_from_db()
+        self.assertEqual(new_first_name, form_data["first_name"])
+        self.assertEqual(new_last_name, form_data["last_name"])
+
 
 class TaskTypeViewTest(ClientAuthorization):
     def setUp(self):
@@ -205,6 +251,24 @@ class TaskTypeViewTest(ClientAuthorization):
         self.assertRedirects(response, reverse("manager:task_type_list"))
         self.assertTrue(TaskType.objects.filter(name=form_data["name"]).exists())
 
+    def test_task_type_update_view(self):
+        new_name = "New task type name"
+
+        form_data = {
+            "name": new_name,
+        }
+        response = self.client.post(
+            reverse("manager:task_type_update", kwargs={"pk": self.task_type_1.pk}),
+            data=form_data,
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("manager:task_type_detail", kwargs={"pk": self.task_type_1.pk}),
+        )
+        self.task_type_1.refresh_from_db()
+        self.assertEqual(new_name, form_data["name"])
+
 
 class PositionViewTest(ClientAuthorization):
     def setUp(self):
@@ -236,3 +300,21 @@ class PositionViewTest(ClientAuthorization):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("manager:position_list"))
         self.assertTrue(Position.objects.filter(name=form_data["name"]).exists())
+
+    def test_position_update_view(self):
+        new_name = "New position name"
+
+        form_data = {
+            "name": new_name,
+        }
+        response = self.client.post(
+            reverse("manager:position_update", kwargs={"pk": self.position_1.pk}),
+            data=form_data,
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("manager:position_detail", kwargs={"pk": self.position_1.pk}),
+        )
+        self.position_1.refresh_from_db()
+        self.assertEqual(new_name, form_data["name"])
