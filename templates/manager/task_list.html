@@ -1,0 +1,82 @@
+{% extends 'base/base_list.html' %}
+{% load query_param_concat %}
+{% load crispy_forms_filters %}
+
+{% block list_title %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 w-100">
+  <h1 class="fw-bold text-dark m-0">Task List</h1>
+
+  <div class="d-flex align-items-center gap-2 ms-auto">
+    {% if request.GET.status == "completed" %}
+      <a class="btn btn-outline-danger fw-medium d-flex align-items-center gap-1" href="?{% query_param_concat request status="not-completed" page=1 %}">
+        <span>❌ Uncompleted</span>
+      </a>
+    {% else %}
+      <a class="btn btn-outline-success fw-medium d-flex align-items-center gap-1" href="?{% query_param_concat request status="completed" page=1 %}">
+        <span>✅ Completed</span>
+      </a>
+    {% endif %}
+
+    {% if request.GET.scope == "my" %}
+      <a class="btn btn-outline-primary fw-medium d-flex align-items-center gap-1" href="?{% query_param_concat request scope="all" %}">
+        <span>👥 All Tasks</span>
+      </a>
+    {% else %}
+      <a class="btn btn-outline-primary fw-medium d-flex align-items-center gap-1" href="?{% query_param_concat request scope="my" %}">
+        <span>👤 My Tasks</span>
+      </a>
+    {% endif %}
+
+    <a class="btn btn-outline-dark fw-medium d-flex align-items-center gap-2" href="{% url 'manager:task_create' %}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5a.5.5 0 0 1 .5-.5"/>
+      </svg>
+      <span>Create Task</span>
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block search_form %}
+  <form class="d-flex gap-2 align-items-center" action="" method="GET" novalidate>
+    {{ search_form|crispy }}
+    <input class="btn btn-primary" type="submit" value="🔍">
+    <a class="btn btn-secondary" href="{% url 'manager:task_list' %}">🔄</a>
+  </form>
+{% endblock %}
+
+{% block table_header %}
+  <th class="py-3 px-3 text-secondary tracking-wider">Name</th>
+  <th class="py-3 text-secondary tracking-wider">Deadline</th>
+  <th class="py-3 text-secondary tracking-wider">Is completed</th>
+  <th class="py-3 text-secondary tracking-wider">Priority</th>
+  <th class="py-3 px-3 text-secondary tracking-wider">Task type</th>
+{% endblock %}
+
+{% block table_data %}
+  {% for task in task_list %}
+    <tr class="border-bottom">
+      <td class="px-3 py-3">
+        <a class="table-link fw-medium text-decoration-none" href="{{ task.get_absolute_url }}">{{ task.name }}</a>
+      </td>
+      <td class="text-secondary">{{ task.deadline }}</td>
+      <td>
+        {% if task.is_completed %}
+          <span class="badge bg-success-subtle text-success px-2.5 py-1.5 rounded-pill fw-medium fs-6">True</span>
+        {% else %}
+          <span class="badge bg-danger-subtle text-danger px-2.5 py-1.5 rounded-pill fw-medium fs-6">False</span>
+        {% endif %}
+      </td>
+      <td>
+        <span class="fw-normal text-dark">{{ task.get_priority_display }}</span>
+      </td>
+      <td class="px-3 text-secondary">{{ task.task_type }}</td>
+    </tr>
+  {% endfor %}
+{% endblock %}
+
+{% block empty_table %}
+  <div class="text-center py-5 bg-white border rounded shadow-sm my-4">
+    <p class="text-secondary m-0 fs-5 fw-medium">There are no tasks yet.</p>
+  </div>
+{% endblock %}

@@ -1,0 +1,350 @@
+import datetime
+from urllib import response
+
+from django.contrib.auth import get_user_model
+from django.db.models import Model
+from django.test import TestCase
+from django.urls import reverse
+from django.utils import timezone
+
+from manager.models import TaskType, Task, Position
+from manager.tests.test_base import ClientAuthorization
+
+
+class AccessViewTest(TestCase):
+    def test_login_redirect_no_pk_url(self):
+        urls = [
+            "task_list",
+            "task_create",
+            "worker_list",
+            "worker_create",
+            "task_type_list",
+            "task_type_create",
+            "position_list",
+            "position_create",
+        ]
+
+        login_url = reverse("login")
+
+        for path in urls:
+            with self.subTest(info=path):
+                target_url = reverse("manager:" + path)
+                response = self.client.get(target_url)
+                self.assertEqual(response.status_code, 302)
+                self.assertRedirects(response, f"{login_url}?next={target_url}")
+
+    def test_login_redirect_pk_url(self):
+        urls = [
+            "task_detail",
+            "task_update",
+            "task_delete",
+            "task_type_detail",
+            "task_type_update",
+            "task_status_update",
+            "task_type_delete",
+            "worker_detail",
+            "worker_update",
+            "worker_delete",
+            "position_detail",
+            "position_update",
+            "position_delete",
+        ]
+
+        login_url = reverse("login")
+
+        for path in urls:
+            with self.subTest(info=path):
+                target_url = reverse("manager:" + path, args=[1])
+                response = self.client.get(target_url)
+                self.assertEqual(response.status_code, 302)
+                self.assertRedirects(response, f"{login_url}?next={target_url}")
+
+    def test_index_access(self):
+        response = self.client.get(reverse("manager:index"))
+        self.assertEqual(response.status_code, 200)
+
+
+class TaskViewTest(ClientAuthorization):
+    def setUp(self):
+        super().setUp()
+        self.test_task_type = TaskType.objects.create(name="test")
+        self.task_1 = Task.objects.create(
+            name="test1",
+            deadline=timezone.now(),
+            is_completed=False,
+            priority=1,
+            task_type=self.test_task_type,
+        )
+        self.task_2 = Task.objects.create(
+            name="test2",
+            deadline=timezone.now(),
+            is_completed=False,
+            priority=1,
+            task_type=self.test_task_type,
+        )
+
+    def test_task_list_view(self):
+        response = self.client.get(reverse("manager:task_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["task_list"]), list(Task.objects.all()))
+        self.assertTemplateUsed(response, "manager/task_list.html")
+
+    def test_task_detail_view(self):
+        response = self.client.get(
+            reverse("manager:task_detail", args=[self.task_1.pk])
+        )
+
+        self.assertContains(response, self.task_1.name)
+        self.assertContains(response, self.task_1.get_priority_display())
+        self.assertContains(response, self.task_1.deadline.strftime("%B %d, %Y"))
+        self.assertContains(response, self.task_1.description)
+        self.assertTemplateUsed(response, "manager/task_detail.html")
+
+    def test_task_create_view(self):
+        form_data = {
+            "name": "test3",
+            "description": "Some text",
+            "deadline": timezone.now() + datetime.timedelta(days=1),
+            "is_completed": False,
+            "priority": 1,
+            "task_type": self.test_task_type.pk,
+        }
+
+        response = self.client.post(reverse("manager:task_create"), data=form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("manager:task_list"))
+        self.assertTrue(Task.objects.filter(name=form_data["name"]).exists())
+
+    def test_task_update_view(self):
+        new_description = "New description"
+        new_status = not self.task_1.is_completed
+        form_data = {
+            "name": self.task_1.name,
+            "description": new_description,
+            "deadline": self.task_1.deadline,
+            "is_completed": new_status,
+            "priority": self.task_1.priority,
+            "task_type": self.task_1.task_type.pk,
+        }
+        response = self.client.post(
+            reverse("manager:task_update", kwargs={"pk": self.task_1.pk}),
+            data=form_data,
+        )
+
+        self.assertRedirects(
+            response, reverse("manager:task_detail", kwargs={"pk": self.task_1.pk})
+        )
+        self.task_1.refresh_from_db()
+        self.assertEqual(new_description, form_data["description"])
+        self.assertEqual(new_status, form_data["is_completed"])
+
+    def test_task_delete_view(self):
+        response = self.client.post(
+            reverse("manager:task_delete", args=[self.task_1.pk])
+        )
+        self.assertRedirects(response, reverse("manager:task_list"))
+        self.assertFalse(Task.objects.filter(name=self.task_1.name).exists())
+
+
+class WorkerViewTest(ClientAuthorization):
+    def setUp(self):
+        super().setUp()
+        self.position = Position.objects.create(name="test1")
+        self.worker_1 = get_user_model().objects.create_user(
+            username="test1",
+            password="test",
+            first_name="first",
+            last_name="last",
+            email="user1@test.com",
+            position=self.position,
+        )
+        self.worker_2 = get_user_model().objects.create_user(
+            username="test2",
+            password="test",
+            first_name="first",
+            last_name="last",
+            email="user2@test.com",
+            position=self.position,
+        )
+
+    def test_worker_list_view(self):
+        response = self.client.get(reverse("manager:worker_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            list(response.context["worker_list"]), list(get_user_model().objects.all())
+        )
+        self.assertTemplateUsed(response, "manager/worker_list.html")
+
+    def test_worker_detail_view(self):
+        response = self.client.get(
+            reverse("manager:worker_detail", args=[self.worker_1.pk])
+        )
+
+        self.assertContains(response, self.worker_1.username)
+        self.assertContains(
+            response, self.worker_1.first_name + " " + self.worker_1.last_name
+        )
+        self.assertContains(response, self.worker_1.email)
+        self.assertContains(response, self.worker_1.position.name)
+        self.assertTemplateUsed(response, "manager/worker_detail.html")
+
+    def test_worker_create_view(self):
+        form_data = {
+            "username": "some_user",
+            "password1": "Super Secret password",
+            "password2": "Super Secret password",
+        }
+
+        response = self.client.post(reverse("manager:worker_create"), data=form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("manager:worker_list"))
+        self.assertTrue(
+            get_user_model().objects.filter(username=form_data["username"]).exists()
+        )
+
+    def test_worker_update_view(self):
+        new_first_name = "New first name"
+        new_last_name = "New last name"
+
+        form_data = {
+            "first_name": new_first_name,
+            "last_name": new_last_name,
+            "email": self.worker_1.email,
+            "position": self.worker_1.position.pk,
+        }
+        response = self.client.post(
+            reverse("manager:worker_update", kwargs={"pk": self.worker_1.pk}),
+            data=form_data,
+        )
+
+        self.assertRedirects(
+            response, reverse("manager:worker_detail", kwargs={"pk": self.worker_1.pk})
+        )
+        self.worker_1.refresh_from_db()
+        self.assertEqual(new_first_name, form_data["first_name"])
+        self.assertEqual(new_last_name, form_data["last_name"])
+
+    def test_worker_delete_view(self):
+        response = self.client.post(
+            reverse("manager:worker_delete", args=[self.worker_1.pk])
+        )
+        self.assertRedirects(response, reverse("manager:worker_list"))
+        self.assertFalse(
+            get_user_model().objects.filter(username=self.worker_1.username).exists()
+        )
+
+
+class TaskTypeViewTest(ClientAuthorization):
+    def setUp(self):
+        super().setUp()
+        self.task_type_1 = TaskType.objects.create(name="test1")
+        self.task_type_2 = TaskType.objects.create(name="test2")
+
+    def test_task_type_list_view(self):
+        response = self.client.get(reverse("manager:task_type_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            list(response.context["task_type_list"]), list(TaskType.objects.all())
+        )
+        self.assertTemplateUsed(response, "manager/task_type_list.html")
+
+    def test_task_type_detail_view(self):
+        response = self.client.get(
+            reverse("manager:task_type_detail", args=[self.task_type_1.pk])
+        )
+
+        self.assertContains(response, self.task_type_1.name)
+        self.assertTemplateUsed(response, "manager/task_type_detail.html")
+
+    def test_task_type_create_view(self):
+        form_data = {"name": "some name"}
+
+        response = self.client.post(reverse("manager:task_type_create"), data=form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("manager:task_type_list"))
+        self.assertTrue(TaskType.objects.filter(name=form_data["name"]).exists())
+
+    def test_task_type_update_view(self):
+        new_name = "New task type name"
+
+        form_data = {
+            "name": new_name,
+        }
+        response = self.client.post(
+            reverse("manager:task_type_update", kwargs={"pk": self.task_type_1.pk}),
+            data=form_data,
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("manager:task_type_detail", kwargs={"pk": self.task_type_1.pk}),
+        )
+        self.task_type_1.refresh_from_db()
+        self.assertEqual(new_name, form_data["name"])
+
+    def test_task_type_delete_view(self):
+        response = self.client.post(
+            reverse("manager:task_type_delete", args=[self.task_type_1.pk])
+        )
+        self.assertRedirects(response, reverse("manager:task_type_list"))
+        self.assertFalse(TaskType.objects.filter(name=self.task_type_1.name).exists())
+
+
+class PositionViewTest(ClientAuthorization):
+    def setUp(self):
+        super().setUp()
+        self.position_1 = Position.objects.create(name="test1")
+        self.position_2 = Position.objects.create(name="test2")
+
+    def test_position_list_view(self):
+        response = self.client.get(reverse("manager:position_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            list(response.context["position_list"]), list(Position.objects.all())
+        )
+        self.assertTemplateUsed(response, "manager/position_list.html")
+
+    def test_position_detail_view(self):
+        response = self.client.get(
+            reverse("manager:position_detail", args=[self.position_1.pk])
+        )
+
+        self.assertContains(response, self.position_1.name)
+        self.assertTemplateUsed(response, "manager/position_detail.html")
+
+    def test_position_create_view(self):
+        form_data = {"name": "some name"}
+
+        response = self.client.post(reverse("manager:position_create"), data=form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("manager:position_list"))
+        self.assertTrue(Position.objects.filter(name=form_data["name"]).exists())
+
+    def test_position_update_view(self):
+        new_name = "New position name"
+
+        form_data = {
+            "name": new_name,
+        }
+        response = self.client.post(
+            reverse("manager:position_update", kwargs={"pk": self.position_1.pk}),
+            data=form_data,
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("manager:position_detail", kwargs={"pk": self.position_1.pk}),
+        )
+        self.position_1.refresh_from_db()
+        self.assertEqual(new_name, form_data["name"])
+
+    def test_position_delete_view(self):
+        response = self.client.post(
+            reverse("manager:position_delete", args=[self.position_1.pk])
+        )
+        self.assertRedirects(response, reverse("manager:position_list"))
+        self.assertFalse(Position.objects.filter(name=self.position_1.name).exists())

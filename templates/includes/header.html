@@ -1,0 +1,59 @@
+<header class="navbar navbar-light bg-white border-bottom sticky-top py-3 shadow-sm">
+  <div class="container-fluid px-4 d-flex align-items-center position-relative">
+
+    <div class="flex-grow-1 flex-md-grow-0">
+      <a class="navbar-brand fw-bold text-dark fs-4 m-0 p-0" href="{% url 'manager:index' %}">Task Manager</a>
+    </div>
+
+    <div class="position-absolute start-50 translate-middle-x">
+      <ul class="nav gap-4">
+        <li class="nav-item">
+          <a class="nav-link active p-0 text-secondary fw-medium" href="{% url 'manager:task_list' %}">Tasks</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link p-0 text-secondary fw-medium" href="{% url 'manager:worker_list' %}">Workers</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link p-0 text-secondary fw-medium" href="{% url 'manager:task_type_list' %}">Task Types</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link p-0 text-secondary fw-medium" href="{% url 'manager:position_list' %}">Positions</a>
+        </li>
+      </ul>
+    </div>
+<div class="ms-auto">
+  {% if user.is_authenticated %}
+    <div class="d-flex align-items-center gap-3">
+
+      <a href="{% url 'manager:worker_detail' user.pk %}" class="text-dark d-flex align-items-center" title="Profile">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+          <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+        </svg>
+      </a>
+
+      <form action="{% url 'logout' %}" method="POST" class="m-0 d-flex align-items-center">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-link text-dark p-0 border-0 d-flex align-items-center" title="Logout">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </form>
+
+    </div>
+  {% else %}
+    <a class="text-dark d-flex align-items-center" href="{% url 'login' %}" title="Login">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+        <polyline points="10 17 5 12 10 7"></polyline>
+        <line x1="15" y1="12" x2="5" y2="12"></line>
+      </svg>
+    </a>
+  {% endif %}
+</div>
+
+  </div>
+</header>

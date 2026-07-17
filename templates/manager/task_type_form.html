@@ -1,0 +1,13 @@
+{% extends 'base/base_form.html' %}
+
+{% block class_name %}
+	Task Type
+{% endblock %}
+
+{% block back_button %}
+	  {% if task_type %}
+    <a class="btn btn-primary mt-3"  href="{% url 'manager:task_type_detail' task_type.pk %}" >Back to details</a>
+  {% else %}
+    <a class="btn btn-primary mt-3"  href="{% url 'manager:task_type_list' %}" >Back to list</a>
+  {% endif %}
+{% endblock %}

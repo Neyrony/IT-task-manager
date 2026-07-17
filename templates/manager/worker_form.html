@@ -1,0 +1,13 @@
+{% extends 'base/base_form.html' %}
+
+{% block class_name %}
+	Worker
+{% endblock %}
+
+{% block back_button %}
+  {% if worker %}
+    <a class="btn btn-primary mt-3"  href="{% url 'manager:worker_detail' worker.pk %}" >Back to details</a>
+  {% else %}
+    <a class="btn btn-primary mt-3"  href="{% url 'manager:worker_list' %}" >Back to list</a>
+  {% endif %}
+{% endblock %}
