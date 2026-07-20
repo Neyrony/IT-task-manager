@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 
-from it_task_manager import settings
+from it_task_manager.settings import base
 
 
 class TaskType(models.Model):
@@ -79,7 +79,7 @@ class Task(models.Model):
         TaskType, on_delete=models.CASCADE, related_name="tasks"
     )
     assignees = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="assigned_tasks"
+        base.AUTH_USER_MODEL, related_name="assigned_tasks"
     )
 
     class Meta:
