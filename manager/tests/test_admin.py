@@ -1,6 +1,7 @@
 import datetime
 
 from django.urls import reverse
+from django.utils import timezone
 
 from manager.models import Position, TaskType, Task
 from manager.tests.test_base import ClientAuthorization
@@ -54,15 +55,22 @@ class TestTaskAdmin(ClientAuthorization):
         super().setUpClass()
         cls.task = Task.objects.create(
             name="test",
-            deadline=datetime.datetime.now(),
+            deadline=timezone.now(),
             is_completed=False,
             priority=1,
             task_type=TaskType.objects.create(name="test"),
         )
         cls.task_info = [
             cls.task.name,
-            cls.task.deadline,
+            cls.task.deadline.strftime("%B %d, %Y"),
             cls.task.is_completed,
             cls.task.priority,
             cls.task.task_type,
         ]
+
+    def test_display_task(self):
+        for field in self.task_info:
+            with self.subTest(info=field):
+                url = reverse("admin:manager_task_changelist")
+                response = self.client.get(url)
+                self.assertContains(response, field)
