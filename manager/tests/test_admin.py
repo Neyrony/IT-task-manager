@@ -1,7 +1,5 @@
-import datetime
-
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import timezone, dateformat
 
 from manager.models import Position, TaskType, Task
 from manager.tests.test_base import ClientAuthorization
@@ -62,7 +60,7 @@ class TestTaskAdmin(ClientAuthorization):
         )
         cls.task_info = [
             cls.task.name,
-            cls.task.deadline.strftime("%B %d, %Y"),
+            dateformat.format(cls.task.deadline, "N j, Y, g:i a"),
             cls.task.is_completed,
             cls.task.priority,
             cls.task.task_type,
